@@ -1,0 +1,23 @@
+﻿<div class="modal hide fade" id="filter_form_div" style="display: none;">
+    <div class="modal-header">
+      <a data-dismiss="modal" class="close">×</a>
+      <h3>Edit {{catalog.name}} Filter</h3>
+    </div>
+    <div class="modal-body" style="max-height:550px">
+        <form class="form-horizontal" method="post" id="filter_form" action="/filter/edit/update/">
+          <input type="hidden" name="id" value="{{catalog.id}}">
+        {% for item in filters %}
+          <div class="control-group">
+            <label for="{{item.key}}_filter" class="control-label">{{item.key}} filter</label>
+            <div class="controls">
+                <input type="text" id="{{item.key}}_filter" class="input-xlarge" name="{{item.key}}" value="{{item.query}}" >
+            </div>
+          </div>
+        {% endfor %}         
+        </form>        
+    </div>
+    <div class="modal-footer">
+      <a data-dismiss="modal" class="btn" href="#">Close</a>
+      <a class="btn btn-primary" href="#" id ="filter_save" type="submit">Save changes</a>
+    </div>
+</div>

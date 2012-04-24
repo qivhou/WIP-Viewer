@@ -1,0 +1,63 @@
+﻿<div class="modal hide fade" id="catalog_form_div" style="display: none;">
+    <div class="modal-header">
+      <a data-dismiss="modal" class="close">×</a>
+      <h3>Edit {{catalog.name}} Catalog</h3>
+    </div>
+    <div class="modal-body" style="max-height:550px">
+        <form class="form-horizontal" method="post" id="catalog_form" action="/catalog/edit/update/">
+          <input type="hidden" name="id" value="{{catalog.id}}">
+          <div class="control-group">
+            <label for="catalog_name" class="control-label">Name</label>
+            <div class="controls">
+              <input type="text" id="catalog_name" class="input-xlarge" name="catalog_name" value="{{catalog.name}}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_key" class="control-label">Key</label>
+            <div class="controls">
+              <input type="text" id="catalog_key" class="input-xlarge" name="catalog_key" value="{{catalog.key}}" readonly>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_webproducer" class="control-label">Web Producer</label>
+            <div class="controls">
+              <input type="text" id="catalog_webproducer" class="input-xlarge" name="catalog_webproducer" value="{{catalog.webproducer}}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_developers" class="control-label">Developers</label>
+            <div class="controls">
+              <input type="text" id="catalog_developers" class="input-xlarge" name="catalog_developers" value="{{catalog.developers}}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_revision_indev" class="control-label">Revision indev</label>
+            <div class="controls">
+              <input type="text" id="catalog_revision_indev" class="input-xlarge" name="catalog_revision_indev" value="{{catalog.revision_indev}}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_revision_intest" class="control-label">Revision intest</label>
+            <div class="controls">
+              <input type="text" id="catalog_revision_intest" class="input-xlarge" name="catalog_revision_intest" value="{{catalog.revision_intest}}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_url" class="control-label">URL</label>
+            <div class="controls">
+              <input type="text" id="catalog_url" class="input-xlarge" name="catalog_url" value="{{catalog.url}}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="catalog_default_filter" class="control-label">Default Filter</label>
+            <div class="controls">
+              <input type="text" id="catalog_default_filter" class="input-xlarge" name="catalog_default_filter" value="{{catalog.default_filter}}">
+            </div>
+          </div>         
+        </form>        
+    </div>
+    <div class="modal-footer">
+      <a data-dismiss="modal" class="btn" href="#">Close</a>
+      <a class="btn btn-primary" href="#" id ="catalog_save" type="submit">Save changes</a>
+    </div>
+</div>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WIP Data Viewer</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="/static/styles/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="/static/styles/jquery.jqChart.css" type="text/css" rel="stylesheet" />
+    <style type="text/css">
+        body {
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        .hero-unit{
+            padding:30px;
+        }
+        .hero-unit h1{
+            font-size:30px;
+        }   
+        .hero-unit p{
+            font-size:15px;
+        }
+    </style>
+    <link href="/static/styles/bootstrap-responsive.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/images/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/images/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/static/images/apple-touch-icon-57-precomposed.png">    
+</head>
+<body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">WIP Viewer</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span2">
+            <div style="padding-top:40px;" class="controls">
+                <h3>Count on chart.</h3>
+                <label class="checkbox inline">
+                    <input type="checkbox" value="indev_line" name="indev_line">InDev Count
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" value="blocked_line" name="blocked_line">Blocked Count
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" value="removed_line" name="removed_line">Removed Count
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" value="resolved_line" name="resolved_line">Resolved Count
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" value="analysis_line" name="analysis_line">Analysis Count
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" value="ready_line" name="ready_line">Ready Count
+                </label>
+                <br />
+                <a class="btn btn-primary btn-large" href="#" id="launchChart" data-toggle="modal">Launch chart</a>
+            </div>
+        </div>
+        <div class="span10" id="jqChart" style="height: 600px;" >
+        </div>
+      </div>
+      <hr>
+      <footer>
+        <p>©Schneider-electric.com China WEB Team 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="/static/scripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/static/scripts/jquery.jqChart.min.js"></script>
+<script type="text/javascript" src="/static/scripts/json2.js"></script>
+<script type="text/javascript" src="/static/scripts/bootstrap.js"></script>
+<script lang="javascript" type="text/javascript">
+$(document).ready(function () {
+    var records_json = JSON.parse("{{records|escapejs}}");
+    var data_analysis_json = new Array();
+    var data_ready_json = new Array();
+    var data_indev_json = new Array();
+    var data_resolved_json = new Array();
+    var data_blocked_json = new Array();
+    var data_removed_json = new Array();    
+    for (var n in records_json){
+        var obj = records_json[n].fields;
+        data_analysis_json.push(new Array(new Date(obj.created),obj.analysis_count));
+        data_removed_json.push(new Array(new Date(obj.created),obj.removed_count));
+        data_indev_json.push(new Array(new Date(obj.created),obj.indev_count));
+        data_ready_json.push(new Array(new Date(obj.created),obj.ready_count));
+        data_resolved_json.push(new Array(new Date(obj.created),obj.resolved_count));
+        data_blocked_json.push(new Array(new Date(obj.created),obj.blocked_count));
+    }
+    var analysis_line = {type:'line',title:'in analysis',strokeStyle:'red',data:data_analysis_json};
+    var indev_line={type:'line',title:'in dev',strokeStyle:'blue',data:data_indev_json};
+    var ready_line={type:'line',title:'ready for coding',strokeStyle:'green',data:data_ready_json};
+    var resolved_line={type:'line',title:'resolved',strokeStyle:'#ffc40d',data:data_resolved_json};
+    var blocked_line={type:'line',title:'blocked',strokeStyle:'#c3325f',data:data_blocked_json};
+    var removed_line={type:'line',title:'removed',strokeStyle:'#7a43b6',data:data_removed_json};
+    $('#jqChart').jqChart({
+        title: { text: '{{catalog.name}} Line Chart' },
+        series: [indev_line,ready_line,removed_line,blocked_line,analysis_line]
+    });
+    $(".checkbox input").attr("checked","true");
+    $("#launchChart").click(function(){
+        var line= new Array();
+        var n = $("input:checked").length;
+        if (n>0){
+            $("input:checked").each(function(i){
+                line.push(eval($(this).val()));
+            });
+            $('#jqChart').jqChart({
+                title: { text: '{{catalog.name}} Line Chart' },
+                series: line
+            });
+        }else{
+            alert("Please choose 1 option at least.");
+        }
+    });
+});
+</script>
+<sfdocready id="sfDocReady"></sfdocready>
+</body>
+</html>

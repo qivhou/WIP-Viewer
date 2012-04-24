@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="hero-unit">
+        <h1>Hello,WIP Viewer!</h1>
+        <p>This is a on-line tools used for WIP statistics & analysis. We can moniter the WIP data by this tool instead of EXCEL file.
+        All the data were pumped from Jira system via spider. What Users need to do is just keeping current dev & testing revision# on time,
+        or keep private filters settings are correct,a python spider can get data based on the filters.
+        There's also a chart view for the WIP data ,we can have a good understanding about the situation on current project by using it.</p>
+        <p><a rel="popover" class="btn btn-primary" herf="#" data-original-title="Aha!" data-content="More is Less!" id="learnmore" >Learn more »</a></p>
+    </div>
+  {% if form.errors %}
+    <p class="error">Sorry, that's not a valid username or password</p>
+  {% endif %}
+
+  <form action="" method="post">
+    <label for="username">User name:</label>
+    <input type="text" name="username" value="" id="username">
+    <label for="password">Password:</label>
+    <input type="password" name="password" value="" id="password">
+
+    <input type="submit" value="login" />
+    <input type="hidden" name="next" value="/home/" />
+  </form>
+
+{% endblock %}

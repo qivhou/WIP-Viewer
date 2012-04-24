@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+<!--- title section--->
+{% block title %}
+    WIP Viewer Home Page
+{% endblock %}
+
+<!--- CSS section--->
+{% block css %}
+
+{% endblock %}
+
+<!--- content section--->
+{% block content %}
+    <div class="hero-unit">
+        <h1>Hello,WIP Viewer!</h1>
+        <p>This is a on-line tools used for WIP statistics & analysis. We can moniter the WIP data by this tool instead of EXCEL file.
+        All the data were pumped from Jira system via spider. What Users need to do is just keeping current dev & testing revision# on time,
+        or keep private filters settings are correct,a python spider can get data based on the filters.
+        There's also a chart view for the WIP data ,we can have a good understanding about the situation on current project by using it.</p>
+        <p><a rel="popover" class="btn btn-primary" herf="#" data-original-title="Aha!" data-content="More is Less!" id="learnmore" >Learn more »</a></p>
+
+    </div>
+    <div class="row">
+        <div class="span4">
+          <h2>JIRA Catalogs in WIP Viewer</h2>
+            <table class="table table-condensed">
+               <thead>
+                 <tr>
+                   <th>#</th>
+                   <th>Project Name</th>
+                   <th>Developer Name</th>
+                 </tr>
+               </thead>
+               <tbody>
+                {% for item in catalogs %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="/data/{{item.key}}/" >{{item.key}}</a></td>
+                        <td>{{item.developers}}</td>
+                    </tr>
+                {% empty %}
+                    There's no catalogs in active.
+                {% endfor %}
+               </tbody>
+           </table>
+           <p><button class="btn btn-primary" data-loading-text="loading..." id="pumpall" autocomplete="off" >Pump All</button></p>
+        </div>
+        <div class="span8">
+          <h2>Latest WIP Data</h2> <small>{{latest_day}}</small>
+            <table class="table table-striped table-bordered table-condensed">
+               <thead>
+                 <tr>
+                    <th>#</th>
+                    <th>ProjectName</th>
+                    <th>Analysis</th>
+                    <th>Ready</th>
+                    <th>InDev</th>
+                    <th>Blocked</th>
+                    <th>Resolved</th>
+                    <th>Removed</th>
+                    <th>Testing</th>
+                    <th>Released</th>
+                    <th>Total</th>
+                 </tr>
+               </thead>           
+               <tbody>
+                {% for item in records %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="/data/{{item.catalog.key}}/" >{{item.catalog}}</a></td>
+                        <td>{{item.analysis_count}}</td>
+                        <td>{{item.ready_count}}</td>
+                        <td>{{item.indev_count}}</td>
+                        <td>{{item.blocked_count}}</td>
+                        <td>{{item.resolved_count}}</td>
+                        <td>{{item.removed_count}}</td>
+                        <td>{{item.testing_count}}</td>
+                        <td>{{item.released_count}}</td>
+                        <td>{{item.total_count}}</td>
+                    </tr>
+                {% empty %}
+                    There's no records.
+                {% endfor %}
+               </tbody>
+            </table>
+        </div>
+    </div>    
+{% endblock %}
+
+{% block javascript %}
+    <script lang="javascript" type="text/javascript">
+    $(document).ready(function(){
+        $("#pumpall").click(function(){
+            $("#pumpall").button('loading');
+            $.post(
+                "/schedule/",
+                "",
+                function(data){
+                    $("#pumpall").button('reset');
+                    location.href="/home/";                   
+                },
+                "json"
+            ); 
+        });
+    });
+    </script>
+{% endblock %}
+

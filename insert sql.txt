@@ -1,0 +1,2 @@
+﻿insert into wip_jiradata ("id","created","catalog_id","analysis_count","ready_count","indev_count","blocked_count","resolved_count","removed_count","testing_count","released_count","total_count")
+values(129,'2012-03-02',1,55,16,12,0,3,153,11,257,504)

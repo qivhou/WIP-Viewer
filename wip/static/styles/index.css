@@ -1,0 +1,13 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+.hero-unit{
+    padding:30px;
+}
+.hero-unit h1{
+    font-size:30px;
+}   
+.hero-unit p{
+    font-size:15px;
+}
