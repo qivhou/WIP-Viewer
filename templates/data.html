@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 <!--- title section--->
 {% block title %}
-    {{catalog.name}}Info
+    {{catalog.name}}
 {% endblock %}
 
 <!--- CSS section--->
@@ -15,7 +15,7 @@
 {% block content %}
     <div class="row">
         <div class="span4">
-            <h2>{{catalog.name}} Info</h2>
+            <h2>{{catalog.name}}</h2>
             <div class="tabbable">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#catalog_info" data-toggle="tab">Catalog Info</a></li>
@@ -101,49 +101,77 @@
                     {% include 'search_form.html' %}
                 </div>
             </div>
+            {% csrf_token %}
             <div class="tabbable">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#catalog_data" data-toggle="tab">WIP Data</a></li>
-                    <li><a href="#catalog_chart" data-toggle="tab">WIP Chart</a></li>
+                    <li><a href="#line_chart" data-toggle="tab">WIP Line Chart</a></li>
+                    <li><a href="#area_chart" data-toggle="tab">WIP Area Chart</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="catalog_data">
                         <div class="span8" style="margin:0 0 0 0">
-                            <p>
+                            <p align="right">
                                 <a class="btn btn-primary" id="addRecord" href="#">Add Record</a>
-                                <a class="btn btn-primary" id="importRecords" href="#">Import Records</a>
-                                <a class="btn btn-primary" id="exportRecords" href="#">Export Records</a>
+                                <a class="btn btn-primary" id="importRecords" href="#" style="display:none">Import Records</a>
+                                <a class="btn btn-primary" id="exportRecords" href="#" style="display:none">Export Records</a>
                             </p>
                             <table id="grid" > </table>
                             <div id="gridpage"></div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="catalog_chart">
+                    <div class="tab-pane" id="line_chart">
                         <div class="span8" style="margin:0 0 0 0">
-                            <div class="controls" id="chartlines">                                    
+                            <div class="controls" id="chartlines">
                                 <label class="checkbox inline">
-                                    <input type="checkbox" value="indev_line" name="indev_line">InDev Count
+                                    <input type="checkbox" value="analysis_line" name="analysis_line">InAnalysis
+                                </label>                          
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="removed_line" name="removed_line">Removed
                                 </label>
                                 <label class="checkbox inline">
-                                    <input type="checkbox" value="blocked_line" name="blocked_line">Blocked Count
+                                    <input type="checkbox" value="indev_line" name="indev_line">InDevelopment
+                                </label>                                
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="resolved_line" name="resolved_line">Resolved
                                 </label>
                                 <label class="checkbox inline">
-                                    <input type="checkbox" value="removed_line" name="removed_line">Removed Count
+                                    <input type="checkbox" value="released_line" name="released_line">Released
                                 </label>
                                 <label class="checkbox inline">
-                                    <input type="checkbox" value="resolved_line" name="resolved_line">Resolved Count
-                                </label>
+                                    <input type="checkbox" value="ready_line" name="ready_line">Ready for coding
+                                </label>                                  
                                 <label class="checkbox inline">
-                                    <input type="checkbox" value="analysis_line" name="analysis_line">Analysis Count
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" value="ready_line" name="ready_line">Ready Count
-                                </label>
+                                    <input type="checkbox" value="blocked_line" name="blocked_line">Blocked
+                                </label>                                
                             </div>
-                        </div>
-                        <div id="jqChart" style="height: 450px; margin:0 0 0 0" class="span8">
+                        </div>   
+                        <div id="lineChart" style="height: 450px; margin:0 0 0 0" class="span8">
                         </div>
                     </div>
+                    <div class="tab-pane" id="area_chart">
+                        <div class="span8" style="margin:0 0 0 0">
+                            <div class="controls" id="chartareas">                                    
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="total_area" name="total_area">CFD-Backlog
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="indev_area" name="indev_area">CFD-InDev
+                                </label>                                
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="released_area" name="released_area">CFD-InLive
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="resolved_area" name="resolved_area">CFD-Done
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" value="testing_area" name="testing_area">CFD-InTest
+                                </label>
+                            </div>
+                        </div>   
+                        <div id="areaChart" style="height: 450px; margin:0 0 0 0" class="span8">
+                        </div>
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -161,6 +189,7 @@
     <script type="text/javascript" src="/static/scripts/jquery-ui-1.8.18.custom.min.js"></script>
     <script type="text/javascript" src="/static/scripts/grid.locale-en.js"></script>
     <script type="text/javascript" src="/static/scripts/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/static/scripts/jquery.cookie.js"></script>    
     <script lang="javascript" type="text/javascript">
         function pickdates(id){ 
             $("#"+id+" td input[name='fields.created']").datepicker({dateFormat:"yy-mm-dd",changeYear: true,changeMonth: true}); 
@@ -179,6 +208,10 @@
                 var data_resolved_json = new Array();
                 var data_blocked_json = new Array();
                 var data_removed_json = new Array();
+                var data_total_json = new Array();
+                var data_released_json = new Array();
+                var data_testing_json = new Array();
+                var data_cfdidve_json = new Array();
                 for (var n in data.root){
                     var obj = data.root[n].fields;
                     data_analysis_json.push(new Array(new Date(obj.created),obj.analysis_count));
@@ -187,17 +220,22 @@
                     data_ready_json.push(new Array(new Date(obj.created),obj.ready_count));
                     data_resolved_json.push(new Array(new Date(obj.created),obj.resolved_count));
                     data_blocked_json.push(new Array(new Date(obj.created),obj.blocked_count));
+                    data_total_json.push(new Array(new Date(obj.created),obj.total_count));
+                    data_released_json.push(new Array(new Date(obj.created),obj.released_count));
+                    data_testing_json.push(new Array(new Date(obj.created),obj.testing_count));
+                    data_cfdidve_json.push(new Array(new Date(obj.created),obj.total_count - obj.analysis_count - obj.ready_count))
                 }
-                var analysis_line = {type:'line',title:'in analysis',strokeStyle:'#049cdb',markers:{fillStyle : '#049cdb'},data:data_analysis_json};
-                var ready_line={type:'line',title:'ready for coding',strokeStyle:'#46a546',markers:{fillStyle : '#46a546'},data:data_ready_json};
-                var indev_line={type:'line',title:'in dev',strokeStyle:'#9d261d',markers:{fillStyle : '#9d261d'},data:data_indev_json};
-                var resolved_line={type:'line',title:'resolved',strokeStyle:'#ffc40d',markers:{fillStyle : '#ffc40d'},data:data_resolved_json};
-                var blocked_line={type:'line',title:'blocked',strokeStyle:'#c3325f',markers:{fillStyle : '#c3325f'},data:data_blocked_json};
-                var removed_line={type:'line',title:'removed',strokeStyle:'#7a43b6',markers:{fillStyle : '#7a43b6'},data:data_removed_json};
-                //jqChart
-                $('#jqChart').jqChart({
+                var analysis_line = {type:'line',title:'in analysis',strokeStyle:'#007979',markers:{fillStyle : '#007979'},data:data_analysis_json};
+                var ready_line={type:'line',title:'ready for coding',strokeStyle:'#62c462',markers:{fillStyle : '#62c462'},data:data_ready_json};
+                var indev_line={type:'line',title:'in dev',strokeStyle:'#FAA732',markers:{fillStyle : '#FAA732'},data:data_indev_json};
+                var resolved_line={type:'line',title:'resolved',strokeStyle:'#5BC0DE',markers:{fillStyle : '#5BC0DE'},data:data_resolved_json};
+                var blocked_line={type:'line',title:'blocked',strokeStyle:'#EE5F5B',markers:{fillStyle : '#EE5F5B'},data:data_blocked_json};
+                var removed_line={type:'line',title:'removed',strokeStyle:'#BE77FF',markers:{fillStyle : '#BE77FF'},data:data_removed_json};
+                var released_line={type:'line',title:'released',strokeStyle:'#0088cc',markers:{fillStyle : '#0088cc'},data:data_released_json};
+                //Line Chart
+                $('#lineChart').jqChart({
                     title: { text: '{{catalog.name}} Line Chart' },
-                    series: [analysis_line,ready_line,indev_line,resolved_line,blocked_line,removed_line]
+                    series: [released_line,removed_line,analysis_line,indev_line,resolved_line,ready_line,blocked_line]
                 });
                 //set all the .btn to active,when the page is loaded. 
                 $("#chartlines label input:checkbox").each(function(){
@@ -208,9 +246,33 @@
                     $("#chartlines label input:checked").each(function(index){
                         lines.push(eval($(this).attr("value")));
                     });
-                    $('#jqChart').jqChart({
+                    $('#lineChart').jqChart({
                         title: { text: '{{catalog.name}} Line Chart' },
                         series: lines
+                    });
+                });
+                //Area Chart
+                var total_area = {type:'area',title:'CFD-Backlog',fillStyle:'#0088cc',data:data_total_json};
+                var released_area = {type:'area',title:'CFD-inLive',fillStyle:'#FAA732',data:data_released_json};
+                var indev_area ={type:'area',title:'CFD-inDev',fillStyle:'#62c462',data:data_cfdidve_json};                
+                var resolved_area ={type:'area',title:'CFD-Done',fillStyle:'#5BC0DE',data:data_resolved_json};
+                var testing_area = {type:'area',title:'CFD-inTest',fillStyle:'#EE5F5B',data:data_testing_json};
+                $('#areaChart').jqChart({
+                    title: { text: '{{catalog.name}} Area Chart' },
+                    series: [total_area,indev_area,released_area,resolved_area,testing_area]
+                });
+                //set all the .btn to active,when the page is loaded. 
+                $("#chartareas label input:checkbox").each(function(){
+                    this.checked = true;
+                });
+                $("#chartareas label input:checkbox").bind('click',function(){
+                    var areas = new Array();
+                    $("#chartareas label input:checked").each(function(index){
+                        areas.push(eval($(this).attr("value")));
+                    });
+                    $('#areaChart').jqChart({
+                        title: { text: '{{catalog.name}} area Chart' },
+                        series: areas
                     });
                 });
               }
@@ -224,21 +286,22 @@
                 colModel:[
                     {name:'pk',index:'id',width:40,sortable:false,align:"center",hidden:false},
                     {name:'fields.created',index:'created',width:80,sortable:false,align:"center",editable:true,editrules:{required:true,date:true}},
-                    {name:'fields.analysis_count',index:'analysis_count', width:55, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.ready_count',index:'ready_count', width:50, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.analysis_count',index:'analysis_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.ready_count',index:'ready_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
                     {name:'fields.indev_count',index:'indev_count', width:50, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.resolved_count',index:'resolved_count', width:55, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.blocked_count',index:'blocked_count', width:55, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.removed_count',index:'removed_count', width:55, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.testing_count',index:'testing_count', width:55, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.released_count',index:'released_count', width:55, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
-                    {name:'fields.total_count',index:'total_count', width:50, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.resolved_count',index:'resolved_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.blocked_count',index:'blocked_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.removed_count',index:'removed_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.testing_count',index:'testing_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.released_count',index:'released_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
+                    {name:'fields.total_count',index:'total_count', width:60, align:"center",sortable:false,editable:true,editrules:{required:true,number:true}},
                     {name:'action',index:'action',width:110,align:"center"}
                 ],
                 mtype:"GET",
                 postData:data,
                 height: 'auto',
-                width: 780,
+                width: 770,
+                shrinkToFit: true,
                 rowNum: 15,
                 pager: '#gridpage',
                 viewrecords: true,
@@ -249,19 +312,19 @@
                     repeatitems: false
                 },
                 reloadAfterSubmit: true,
-                editurl: "/data/edit/update/",
+                editurl: "/wip/data/edit/update/",
                 gridComplete:function(){
                     var ids = $("#grid").jqGrid('getDataIDs');
                     for(var i=0;i<ids.length;i++){
                         id = ids[i];
                         edit = "<span class='badge badge-success' title='edit' onclick=\"$('#grid').editRow('"+id+"',true,pickdates);\" >E</span>";
-                        save = "<span class='badge badge-warning' title ='save' onclick=\"$('#grid').saveRow('"+id+"',{extraparam:{catalog_id:{{catalog.id}}}});\">S</span>";
+                        save = "<span class='badge badge-warning' title ='save' onclick=\"$('#grid').saveRow('"+id+"',{extraparam:{catalog_id:{{catalog.id}},'csrfmiddlewaretoken':'"+$.cookie("csrftoken")+"'}});\">S</span>";
                         cancel = "<span class='badge badge-info' title='cancel' onclick=\"$('#grid').restoreRow('"+id+"');\">C</span>";
-                        del = "<span class='badge badge-error' title='delete' onclick=\"$('#grid').jqGrid('delGridRow','"+id+"');\">D</span>";                    
-                        $("#grid").jqGrid('setRowData',ids[i],{action:edit+save+cancel+del});
+                        del = "<span class='badge badge-error' title='delete' onclick=\"$('#grid').jqGrid('delGridRow','"+id+"',{delData:{'csrfmiddlewaretoken':'"+$.cookie("csrftoken")+"'}});\">D</span>";                    
+                        $('#grid').jqGrid('setRowData',ids[i],{action:edit+save+cancel+del});
                     }
                 }
-            });            
+            });
         }
         function validate_msg(msg){
             if ($(".well .alert").length == 0){
@@ -280,14 +343,14 @@
 		}  
         $(document).ready(function () {
             //jqgrid
-            grid_load('/data/json/{{catalog.key}}/','');            
+            grid_load('/wip/data/json/{{catalog.key}}/','');            
             //jqchart
-            chart_load('/data/json/{{catalog.key}}/?rows=all','');        
+            chart_load('/wip/data/json/{{catalog.key}}/?rows=all','');        
             //Set datepicker to date input
             $('#search_div input[name$="_date"]').datepicker({
                 dateFormat: "yy-mm-dd",
                 changeMonth: true,
-                changeYear: true,
+                changeYear: true
             });
             //set the date to empty
             $('#search_div input[name$="_date"]').val("");
@@ -310,7 +373,7 @@
                     //reload jqgrid
                     $("#grid").setGridParam({postData:postdata}).trigger("reloadGrid");
                     //reload jqchart
-                    chart_load('/data/json/{{catalog.key}}/?rows=all', postdata);                
+                    chart_load('/wip/data/json/{{catalog.key}}/?rows=all', postdata);                
                 }
             });
             $("#load_all").click(function(){
@@ -320,16 +383,16 @@
                 //reload jqgrid
                 $("#grid").setGridParam({postData:''}).trigger("reloadGrid");
                 //reload jqchart
-                chart_load('/data/json/{{catalog.key}}/?rows=all', '');
+                chart_load('/wip/data/json/{{catalog.key}}/?rows=all', '');
             });            
             //submit the catalog_modal by post
             $("#catalog_save").click(function(){
                 $.post(
-                    "/catalog/edit/update/",
+                    "/wip/catalog/edit/update/",
                     $("#catalog_form").serialize(),
                     function(data){
                         $("#catalog_form_div").modal('hide');
-                        location.href="/data/{{catalog.key}}/";                    
+                        location.href="/wip/data/{{catalog.key}}/";                    
                     },
                     "json"
                 ); 
@@ -337,15 +400,15 @@
             //submit the filter_modal by post            
             $("#filter_save").click(function(){
                 $.post(
-                    "/filter/edit/update/",
+                    "/wip/filter/edit/update/",
                     $("#filter_form").serialize(),
                     function(data){
                         $("#filter_form_div").modal('hide');
-                        location.href="/data/{{catalog.key}}/";                    
+                        location.href="/wip/data/{{catalog.key}}/";                    
                     },
                     "json"
                 ); 
-            }); 
+            });
             $("#addRecord").click(function(){
                 parameters = {
                     position :"first",
@@ -355,10 +418,7 @@
                 };
                 $("#grid").jqGrid('addRow',parameters);
                 pickdates("new_row");         
-            });
-            $("#exportRecords").click(function(){
-                $("#grid").jqGridExport();
-            });
+            }); 
         });
     </script>
 {% endblock %}

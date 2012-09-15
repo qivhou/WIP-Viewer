@@ -5,7 +5,7 @@ import logging
 
 def newtask_run():
     today = datetime.datetime.now().date()
-    LOG_FILE="wip_"+ str(today) +".log"
+    LOG_FILE="D:/Python/djangosite/wip/wip_"+ str(today) +".log"
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)-15s %(message)s',datefmt='%Y %b %d  %H:%M:%S ',filename=LOG_FILE,filemode='a') 
     logging.info("Start to insert today's %s data. " % str(today)) 
     # connect to Jira System

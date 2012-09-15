@@ -1,5 +1,0 @@
-﻿1. session for user profile
-2. show specific issue on data page,add log table to mark if the issue was marked as resolved.
-3. add feature to manaul pump data for each catalog.
-4. add feature to implode excel
-5

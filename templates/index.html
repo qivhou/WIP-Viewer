@@ -35,7 +35,7 @@
                 {% for item in catalogs %}
                     <tr>
                         <td>{{forloop.counter}}</td>
-                        <td><a href="/data/{{item.key}}/" >{{item.key}}</a></td>
+                        <td><a href="/wip/data/{{item.key}}/" >{{item.key}}</a></td>
                         <td>{{item.developers}}</td>
                     </tr>
                 {% empty %}
@@ -43,7 +43,7 @@
                 {% endfor %}
                </tbody>
            </table>
-           <p><button class="btn btn-primary" data-loading-text="loading..." id="pumpall" autocomplete="off" >Pump All</button></p>
+           <p style="display:none"><button class="btn btn-primary" data-loading-text="loading..." id="pumpall" autocomplete="off" >Pump All</button></p>
         </div>
         <div class="span8">
           <h2>Latest WIP Data</h2> <small>{{latest_day}}</small>
@@ -67,7 +67,7 @@
                 {% for item in records %}
                     <tr>
                         <td>{{forloop.counter}}</td>
-                        <td><a href="/data/{{item.catalog.key}}/" >{{item.catalog}}</a></td>
+                        <td><a href="/wip/data/{{item.catalog.key}}/" >{{item.catalog}}</a></td>
                         <td>{{item.analysis_count}}</td>
                         <td>{{item.ready_count}}</td>
                         <td>{{item.indev_count}}</td>
@@ -88,16 +88,17 @@
 {% endblock %}
 
 {% block javascript %}
+    <script type="text/javascript" src="/static/scripts/jquery.cookie.js"></script>   
     <script lang="javascript" type="text/javascript">
     $(document).ready(function(){
         $("#pumpall").click(function(){
             $("#pumpall").button('loading');
             $.post(
-                "/schedule/",
-                "",
+                "/wip/schedule/",
+                {"csrfmiddlewaretoken":$.cookie("csrftoken")},
                 function(data){
                     $("#pumpall").button('reset');
-                    location.href="/home/";                   
+                    location.href="/wip/home/";                   
                 },
                 "json"
             ); 

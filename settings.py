@@ -1,8 +1,8 @@
 # Django settings for djangosite project.
 import os
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+DEBUG = False
+#TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('admin', 'admin@example.com'),
@@ -13,7 +13,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'jira.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'D:/python/djangosite/jira.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -46,7 +46,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = 'D:/python/djangosite'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -57,7 +57,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = 'D:/python/djangosite/wip/static'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -74,8 +74,8 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     #'/home/administrator/workspace/django/djangosite/wip/static',
-    os.path.join(os.path.dirname(__file__), '/wip/static').replace('\\','/'),
-    #'D:/Python/djangosite/wip/static',
+    #'D:/python/djangosite/wip/static',
+    os.path.join(os.path.dirname(__file__), 'wip/static').replace('\\','/'),
 )
 
 # List of finder classes that know how to find static files in
@@ -112,7 +112,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     #'/home/administrator/workspace/django/djangosite/templates',
-    #'D:/Python/djangosite/templates',
+    #'D:/python/djangosite/templates',
     os.path.join(os.path.dirname(__file__), 'templates').replace('\\','/'),
 )
 

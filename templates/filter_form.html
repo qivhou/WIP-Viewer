@@ -4,7 +4,7 @@
       <h3>Edit {{catalog.name}} Filter</h3>
     </div>
     <div class="modal-body" style="max-height:550px">
-        <form class="form-horizontal" method="post" id="filter_form" action="/filter/edit/update/">
+        <form class="form-horizontal" method="post" id="filter_form" action="/wip/filter/edit/update/">
           <input type="hidden" name="id" value="{{catalog.id}}">
         {% for item in filters %}
           <div class="control-group">
